@@ -7,10 +7,10 @@ import { daysBetween, dispatchStatus, download, fmtDate, inr, outstanding, payme
 import { DataTable, OrderLink, PageHeader, Section, StatusPill } from "@/components/crm/ui";
 import { Button } from "@/components/ui/button";
 
-type Search = { q?: string; view?: string };
+type Search = { q?: string | undefined; view?: string | undefined };
 
 export const Route = createFileRoute("/_authenticated/orders/")({
-  validateSearch: (s: Record<string, unknown>): Search => ({ q: (s.q as string) || undefined, view: (s.view as string) || undefined }),
+  validateSearch: (s: Record<string, unknown>): Search => ({ q: (s["q"] as string) || undefined, view: (s["view"] as string) || undefined }),
   head: () => ({ meta: [{ title: "GeM Orders — INDOSATI CRM" }, { name: "description", content: "All GeM orders with search and filters." }] }),
   component: Orders,
 });

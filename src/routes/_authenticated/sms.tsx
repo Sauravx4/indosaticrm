@@ -25,8 +25,8 @@ function Page() {
   const [rem, setRem] = useState({ days_before: 5, send_time: "10:00", weekend_policy: "previous_working_day", overdue_repeat_days: 1 });
   useEffect(() => {
     if (!settings.data) return;
-    setTpl(String(settings.data.sms_template ?? ""));
-    if (settings.data.reminder) setRem(settings.data.reminder as typeof rem);
+    setTpl(String(settings.data["sms_template"] ?? ""));
+    if (settings.data["reminder"]) setRem(settings.data["reminder"] as typeof rem);
   }, [settings.data]);
 
   async function save() {
