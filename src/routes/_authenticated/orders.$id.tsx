@@ -95,8 +95,8 @@ function OrderPage() {
     toast.success("Dispatch recorded."); dForm.reset(); setDQty({}); refresh();
   }
   async function updateDelivery(did: string, patch: Record<string, string | null>) {
-    const { error } = await supabase.from("dispatches").update(patch).eq("id", did);
-    if (error) return toast.error(error.message);
+    const { error } = await supabase.from("dispatches").update(patch as never).eq("id", did);
+    if (error) return void toast.error(error.message);
     toast.success("Delivery updated."); refresh();
   }
   async function addCrac() {
@@ -111,16 +111,16 @@ function OrderPage() {
     let patch: Record<string, string> = { status };
     if (status === "CRAC Generated" && (!c.crac_number || !c.crac_date)) {
       const num = prompt("CRAC reference number?"); const dt = prompt("CRAC generation date (YYYY-MM-DD)?");
-      if (!num || !dt || !/^\d{4}-\d{2}-\d{2}$/.test(dt)) return toast.error("CRAC number and a valid date are required.");
+      if (!num || !dt || !/^\d{4}-\d{2}-\d{2}$/.test(dt)) return void toast.error("CRAC number and a valid date are required.");
       patch = { ...patch, crac_number: num, crac_date: dt };
     }
-    const { error } = await supabase.from("crac_records").update(patch).eq("id", cid);
-    if (error) return toast.error(error.message);
+    const { error } = await supabase.from("crac_records").update(patch as never).eq("id", cid);
+    if (error) return void toast.error(error.message);
     toast.success("CRAC updated."); refresh();
   }
   async function addPayment() {
     const v = pForm.v;
-    const { error } = await supabase.from("payments").insert({ order_id: id, transaction_ref: v.transaction_ref.trim(), payment_date: v.payment_date, amount: Number(v.amount), method: v.method, invoice_ref: nz(v.invoice_ref), crac_ref: nz(v.crac_ref), bank_ref: nz(v.bank_ref), remarks: nz(v.remarks), created_by: me?.user.id });
+    const { error } = await supabase.from("payments").insert({ order_id: id, transaction_ref: v.transaction_ref.trim(), payment_date: v.payment_date, amount: Number(v.amount), method: v.method, invoice_ref: nz(v.invoice_ref), crac_ref: nz(v.crac_ref), bank_ref: nz(v.bank_ref), remarks: nz(v.remarks), created_by: me?.user.id ?? null });
     if (error) throw error.code === "23505" ? new Error("A payment with this transaction reference already exists.") : error;
     toast.success("Payment recorded."); pForm.reset(); refresh();
   }
@@ -128,7 +128,7 @@ function OrderPage() {
     const reason = prompt("Reason for reversing this payment?");
     if (!reason) return;
     const { error } = await supabase.from("payments").update({ reversed: true, reversed_reason: reason }).eq("id", pid);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Payment reversed."); refresh();
   }
   async function addAdj() {
@@ -147,20 +147,20 @@ function OrderPage() {
   async function toggleCancel() {
     if (!confirm(o.cancelled ? "Restore this order?" : "Cancel this order? Dispatch reminders will stop.")) return;
     const { error } = await supabase.from("orders").update({ cancelled: !o.cancelled }).eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     refresh();
   }
   async function upload(file: File, category: string) {
     const path = `${id}/${Date.now()}-${file.name}`;
     const { error } = await supabase.storage.from("documents").upload(path, file);
-    if (error) return toast.error(error.message);
-    const { error: e2 } = await supabase.from("attachments").insert({ order_id: id, category, file_path: path, file_name: file.name, uploaded_by: me?.user.id });
-    if (e2) return toast.error(e2.message);
+    if (error) return void toast.error(error.message);
+    const { error: e2 } = await supabase.from("attachments").insert({ order_id: id, category, file_path: path, file_name: file.name, uploaded_by: me?.user.id ?? null });
+    if (e2) return void toast.error(e2.message);
     toast.success("File uploaded."); refresh();
   }
   async function openFile(path: string) {
     const { data: s, error } = await supabase.storage.from("documents").createSignedUrl(path, 300);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     window.open(s.signedUrl, "_blank");
   }
 

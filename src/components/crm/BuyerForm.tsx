@@ -22,7 +22,7 @@ export function BuyerFields({ value, onChange }: { value: BuyerDraft; onChange: 
   return (
     <div className="grid gap-3 md:grid-cols-3">
       {fields.map(([k, label, req]) => (
-        <Field key={k} label={label} required={req}>
+        <Field key={k} label={label} required={!!req}>
           <Input value={value[k]} required={req}
             pattern={k === "mobile" ? "[0-9+ ]{10,14}" : k === "pin_code" ? "[0-9]{6}" : undefined}
             type={k === "email" ? "email" : "text"}

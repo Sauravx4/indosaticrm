@@ -30,15 +30,15 @@ function Page() {
   if (!me?.isAdmin) return <div className="rounded-lg border bg-card p-8 text-sm text-muted-foreground">Only administrators can open settings.</div>;
 
   async function setRole(uid: string, role: Role) {
-    if (uid === me!.user.id && role !== "admin") return toast.error("You can't remove your own admin role.");
+    if (uid === me!.user.id && role !== "admin") return void toast.error("You can't remove your own admin role.");
     await supabase.from("user_roles").delete().eq("user_id", uid);
     const { error } = await supabase.from("user_roles").insert({ user_id: uid, role });
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Role updated."); qc.invalidateQueries({ queryKey: ["users"] });
   }
   async function updatePhone(uid: string, phone: string) {
     const { error } = await supabase.from("profiles").update({ phone }).eq("id", uid);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Mobile number saved.");
   }
   async function backup() {

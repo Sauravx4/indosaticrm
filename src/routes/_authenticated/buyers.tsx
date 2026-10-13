@@ -26,7 +26,7 @@ function Page() {
     if (!edit) return;
     const payload = cleanBuyer(edit.v);
     const { error } = edit.id ? await supabase.from("buyers").update(payload).eq("id", edit.id) : await supabase.from("buyers").insert(payload);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Buyer saved."); setEdit(null); qc.invalidateQueries();
   }
 

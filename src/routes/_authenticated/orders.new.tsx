@@ -43,8 +43,8 @@ function NewOrder() {
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (o.dispatch_deadline < o.order_date) return toast.error("Dispatch deadline cannot be before the order date.");
-    if (!items.some((i) => i.product_name.trim())) return toast.error("Add at least one product.");
+    if (o.dispatch_deadline < o.order_date) return void toast.error("Dispatch deadline cannot be before the order date.");
+    if (!items.some((i) => i.product_name.trim())) return void toast.error("Add at least one product.");
     setBusy(true);
     try {
       let bid = buyerId;
@@ -56,7 +56,7 @@ function NewOrder() {
       const { data: ord, error } = await supabase.from("orders").insert({
         gem_order_number: o.gem_order_number.trim(), contract_ref: o.contract_ref || null, order_date: o.order_date,
         dispatch_deadline: o.dispatch_deadline, buyer_id: bid, assigned_to: o.assigned_to || null,
-        additional_charges: Number(o.additional_charges || 0), official_value: official, remarks: o.remarks || null, created_by: me?.user.id,
+        additional_charges: Number(o.additional_charges || 0), official_value: official, remarks: o.remarks || null, created_by: me?.user.id ?? null,
       }).select("id").single();
       if (error) throw error.code === "23505" ? new Error("This GeM order number already exists.") : error;
       const { error: ie } = await supabase.from("order_items").insert(items.filter((i) => i.product_name.trim()).map((i) => ({

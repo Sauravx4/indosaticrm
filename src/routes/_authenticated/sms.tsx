@@ -30,9 +30,9 @@ function Page() {
   }, [settings.data]);
 
   async function save() {
-    if (rem.days_before < 5) return toast.error("Reminders must be at least 5 days before the deadline.");
+    if (rem.days_before < 5) return void toast.error("Reminders must be at least 5 days before the deadline.");
     const { error } = await supabase.from("app_settings").upsert([{ key: "sms_template", value: tpl }, { key: "reminder", value: rem }]);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Reminder settings saved."); qc.invalidateQueries({ queryKey: ["settings"] });
   }
 

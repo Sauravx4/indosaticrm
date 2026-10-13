@@ -54,7 +54,7 @@ function AuthPage() {
 
   async function google() {
     const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (r.error) return toast.error(String(r.error.message ?? r.error));
+    if (r.error) return void toast.error(String(r.error.message ?? r.error));
     if (r.redirected) return;
     navigate({ to: "/dashboard" });
   }

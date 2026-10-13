@@ -91,7 +91,7 @@ export function statusTone(s: string): "default" | "success" | "warning" | "dang
 
 export function toCSV(rows: Record<string, unknown>[]) {
   if (!rows.length) return "";
-  const cols = Object.keys(rows[0]);
+  const cols = Object.keys(rows[0]!);
   const esc = (v: unknown) => {
     const s = v == null ? "" : String(v);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
@@ -110,7 +110,7 @@ export function download(name: string, content: string, type = "text/csv") {
 
 // Excel-compatible spreadsheet (SpreadsheetML) – opens in Excel as .xls
 export function toExcel(rows: Record<string, unknown>[], sheet = "Report") {
-  const cols = rows.length ? Object.keys(rows[0]) : [];
+  const cols = rows.length ? Object.keys(rows[0]!) : [];
   const x = (s: unknown) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const cell = (v: unknown) =>
     typeof v === "number" ? `<Cell><Data ss:Type="Number">${v}</Data></Cell>` : `<Cell><Data ss:Type="String">${x(v)}</Data></Cell>`;
